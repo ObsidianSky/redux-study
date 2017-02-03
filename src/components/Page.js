@@ -1,11 +1,14 @@
-import React, { PropTypes, Component } from 'react'
+import React, {PropTypes, Component} from 'react'
+import PhotosGrid from './PhotoGrid'
 
 export default class Page extends Component {
     onYearBtnClick(e) {
-        this.props.setYear(Number(e.target.textContent));
+        const year = Number(e.target.textContent)
+        this.props.getPhotos(year);
     }
+
     render() {
-        const { year, photos } = this.props;
+        const {year, photos, fetching, error} = this.props;
         return <div>
             <p>
                 <button onClick={::this.onYearBtnClick}>2016</button>
@@ -13,7 +16,11 @@ export default class Page extends Component {
                 <button onClick={::this.onYearBtnClick}>2014</button>
             </p>
             <h3>{year} year</h3>
-            <p>Photos amount: {photos.length}.</p>
+            <p>
+                {fetching && 'Loading...'}
+                {(error && !fetching) && <b>{error}</b>}
+                {(!error && !fetching) && <PhotosGrid photos={photos}/>}
+            </p>
         </div>
     }
 }
@@ -21,5 +28,5 @@ export default class Page extends Component {
 Page.propTypes = {
     year: PropTypes.number.isRequired,
     photos: PropTypes.array.isRequired,
-    setYear: PropTypes.func.isRequired
+    getPhotos: PropTypes.func.isRequired
 }
